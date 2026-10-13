@@ -1,0 +1,8 @@
+name = "pa-francis-memorial-pages"
+pages_build_output_dir = "."
+compatibility_date = "2026-10-12"
+
+[[d1_databases]]
+binding = "RSVPS"
+database_name = "pa-francis-memorial-rsvps"
+database_id = "76b862a0-a534-4350-a651-b9238b6f1692"
