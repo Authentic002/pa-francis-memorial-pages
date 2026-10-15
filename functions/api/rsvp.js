@@ -1,4 +1,4 @@
-const NOTIFY_EMAIL = 'richshadkoncept04@gmail.com';
+const NOTIFY_EMAIL = 'ogbonnayauchenna53@gmail.com';
 const EVENT = 'Celebration of Life for Pa. Francis Oluremi Ademakinwa — Saturday, 19 December 2026 at 12:00 noon, ICAN Centre, Amuwo Odofin, Lagos.';
 const allowedResponses = new Set(['Joyfully Accept', 'Respectfully Decline']);
 const allowedCategories = new Set([
@@ -31,7 +31,12 @@ export async function onRequestPost({request, env}) {
     const statusLabel = response==='Joyfully Accept'?'ACCEPTED':'DECLINED';
     const adminHtml=`<h2>New/updated memorial RSVP: ${esc(statusLabel)}</h2><p><b>Guest:</b> ${esc(guestName)}</p><p><b>Response:</b> ${esc(response)}</p><p><b>Phone:</b> ${esc(phone)}</p><p><b>Email:</b> ${esc(email||'Not supplied')}</p><p><b>Invitation category / invited by:</b> ${esc(category)}</p><p><b>Attendees:</b> ${attendees}</p><p><b>Ticket reference:</b> ${esc(ticketReference)}</p><p><b>Note:</b> ${esc(note||'None')}</p><p>${esc(EVENT)}</p>`;
     await sendEmail(env,NOTIFY_EMAIL,`Memorial RSVP ${statusLabel}: ${guestName}`,adminHtml);
-    if (email) await sendEmail(env,email,`Your memorial RSVP — ${ticketReference}`,`<h2>Thank you, ${esc(guestName)}</h2><p>Your response has been recorded: <b>${esc(response)}</b>.</p><p><b>Invitation category / invited by:</b> ${esc(category)}</p><p><b>Number attending:</b> ${attendees}</p><p><b>Your reference:</b> ${esc(ticketReference)}</p><p>Keep this reference to update your response later. Return to the RSVP form and enter this reference when updating.</p><p>${esc(EVENT)}</p><p>With love, the Ademakinwa family</p>`);
-    return json({ok:true,ticketReference,updated:!!existing,response,guestName,category,attendees,emailSent:true});
+    if (email) {
+  try {
+    await sendEmail(env, email, `Your memorial RSVP — ${ticketReference}`, `<h2>Thank you, ${esc(guestName)}</h2><p>Your response has been recorded: <b>${esc(response)}</b>.</p><p><b>Invitation category / invited by:</b> ${esc(category)}</p><p><b>Number attending:</b> ${attendees}</p><p><b>Your reference:</b> ${esc(ticketReference)}</p><p>Keep this reference to update your response later. Return to the RSVP form and enter this reference when updating.</p><p>${esc(EVENT)}</p><p>With love, the Ademakinwa family</p>`);
+  } catch (e) {
+    console.error('Guest confirmation email failed:', e);
+  }
+}    return json({ok:true,ticketReference,updated:!!existing,response,guestName,category,attendees,emailSent:true});
   } catch(e) { return json({error:'Your RSVP could not be fully processed. Please try again or contact the family. '+(env.DEBUG_ERRORS==='true'?e.message:'')},502); }
 }
